@@ -1,0 +1,135 @@
+﻿@model PaginatedList<Cars.Models.UserBranchViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AuthenticatedLayout.cshtml";
+}
+<h1>Branches</h1>
+<form asp-action="Index" method="get">
+    <div class="form-actions row">
+
+        <div class="col-sm-12 mb-3">
+            <div class="input-group">
+                <div class="col-sm-12 row" id="searchdiv">
+                    <div class="input-group col-md-5">
+                        <input type="search" class="form-control rounded" placeholder="User FirstName, UserName, Email, Branch Name" aria-label="Search"
+                               aria-describedby="search-addon" name="SearchString" value="@ViewData["CurrentFilter"]" />
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary">Search</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <a asp-action="Index" class="btn btn-primary mb-3" style="width:auto;">Back To All Users Branches</a>
+        </div>
+    </div>
+
+</form>
+<p>
+    <a asp-action="Create" asp-controller="Branch" class="btn btn-primary mb-3" style="width: auto;"> Add Branch</a>
+</p>
+<div class="table-responsive mb-3">
+    <table class="table table-bordered table-striped mb-0">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>UserName</th>
+                <th>Email</th>
+                <th>Branch Name</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @item.FirstName
+                </td>
+                <td>
+                    @item.Username
+                </td>
+                <td>
+                    @item.Email
+                </td>
+                <td>
+                    @item.BranchName
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-userid=@item.UserId asp-route-userbranchid="@item.UserBranchID" class="btn btn-primary mb-3 ml-3" style="width:auto">Details</a>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-userid=@item.UserId asp-route-userbranchid="@item.UserBranchID" class="btn btn-primary mb-3 ml-3" style="width:auto">Edit</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+
+}
+
+<div style="overflow-x:auto">
+    <a asp-action="Index"
+       asp-route-pageNumber="@(Model.PageIndex - 1)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       asp-route-currentFilter2="@ViewData["CurrentFilter2"]"
+       class="btn btn-primary @prevDisabled">
+        Previous
+    </a>
+    @{
+        int pagenumbers = (ViewBag.currentpage + 4 <= ViewBag.pages) ? ViewBag.currentpage + 4 : ViewBag.currentpage + 3;
+        if (pagenumbers > ViewBag.pages)
+        {
+            pagenumbers = ViewBag.currentpage + 2;
+        }
+
+        if (pagenumbers > ViewBag.pages)
+        {
+            pagenumbers = ViewBag.currentpage + 1;
+        }
+        if (pagenumbers > ViewBag.pages)
+        {
+            pagenumbers = ViewBag.currentpage;
+        }
+
+        int start = (ViewBag.currentpage - 2 > 0) ? ViewBag.currentpage - 2 : ViewBag.currentpage;
+    }
+    @for (int i = start; i <= pagenumbers; i++)
+    {
+        if (i == ViewBag.currentpage)
+        {
+            <a asp-action="Index"
+               asp-route-pageNumber="@i"
+               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+               class="btn btn-success">
+                @i
+            </a>
+        }
+        else
+        {
+            <a asp-action="Index"
+               asp-route-pageNumber="@i"
+               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+               class="btn btn-primary">
+                @i
+            </a>
+        }
+    }
+    <a asp-action="Index"
+       asp-route-pageNumber="@(Model.PageIndex + 1)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       class="btn btn-primary @nextDisabled">
+        Next
+    </a>
+</div>
+@section Scripts {
+    <script>
+        ChangeColorSidebarItem("linkbranches", "auserbranches");
+    </script>
+}
+
